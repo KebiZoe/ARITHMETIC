@@ -18,7 +18,6 @@ struct AVLNode: Node<Type>{
         height = 0;
     };
     
-#pragma mark todo
     /// 平衡因子
     int balanceFactor(){
         AVLNode<Type> * leftNode = dynamic_cast<AVLNode<Type> *>(this->left);

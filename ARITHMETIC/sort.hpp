@@ -244,7 +244,63 @@ public:
             }
         }
     }
-    
+    /// 计数排序，适合一定范围内的整数进行排序
+    static void countSort(vector<int> &arr){
+        int min = arr[0];
+        int max = arr[0];
+        for (int i = 1; i < arr.size(); i++) {
+            if (arr[i]>max) {
+                max = arr[i];
+            }
+            if (arr[i]<min) {
+                min = arr[i];
+            }
+        }
+        int lenth = max - min + 1;
+        int *count = new int[lenth]{0};
+        for (int i = 0; i < arr.size(); i++){
+            count[arr[i]-min]++;
+        }
+        for(int i = 1; i < lenth; i++){
+            count[i] += count[i-1];
+        }
+        int *output = new int[arr.size()]{0};
+        for(int i = int(arr.size()-1); i > -1; i--){
+            output[--count[arr[i]-min]] = arr[i];
+        }
+        for(int i = 0; i < arr.size(); i++){
+            arr[i] = output[i];
+        }
+    }
+    /// 基数排序，适用于整数排序，尤其是非负整数
+    /// 依次对个位数，十位数，百位数千位数，万位数...进行排序
+    static void radixSort(vector<int> &arr){
+        int max = arr[0];
+        for (int i = 1; i < arr.size(); i++) {
+            if (arr[i]>max) {
+                max = arr[i];
+            }
+        }
+        int *output = new int[arr.size()]{0};
+        for(int divider = 1; divider <= max; divider *= 10){
+            int couts[10] = {0};
+            countingSort(arr, divider, output, couts);
+        }
+    }
+private: static void countingSort(vector<int> &arr, int divider, int *output, int *counts){
+        for(int i=0;i<arr.size();i++){
+            counts[arr[i]/divider%10]++;
+        }
+        for(int i=1;i<10;i++){
+            counts[i] += counts[i-1];
+        }
+        for(int i = int(arr.size()-1); i > -1; i--){
+            output[--counts[arr[i]/divider%10]] = arr[i];
+        }
+        for(int i = 0; i < arr.size(); i++){
+            arr[i] = output[i];
+        }
+    }
     
 };
 

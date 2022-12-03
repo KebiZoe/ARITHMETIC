@@ -42,7 +42,7 @@ void test(){
 }
 
 void testsort() {
-    vector<int> intarr1 = zxx_util::getRandArr(100000, 0, 10000000);
+    vector<int> intarr1 = zxx_util::getRandArr(10, 0, 10000000);
     
     vector<int> intarr2 = vector<int>(intarr1);
     vector<int> intarr3 = vector<int>(intarr1);
@@ -51,6 +51,8 @@ void testsort() {
     vector<int> intarr6 = vector<int>(intarr1);
     vector<int> intarr7 = vector<int>(intarr1);
     vector<int> intarr8 = vector<int>(intarr1);
+    vector<int> intarr9 = vector<int>(intarr1);
+    vector<int> intarr10 = vector<int>(intarr1);
     
     auto mylamthread1 = [&intarr1]{
         zxx_util::timeBlock("堆排序",[&intarr1](){
@@ -115,6 +117,22 @@ void testsort() {
     };
     std::thread mytobj8(mylamthread8);
     mytobj8.detach();
+    
+    auto mylamthread9 = [&intarr9]{
+        zxx_util::timeBlock("计数排序",[&intarr9](){
+            zxx_sort<int>::countSort(intarr9);
+        });
+    };
+    std::thread mytobj9(mylamthread9);
+    mytobj9.detach();
+    
+    auto mylamthread10 = [&intarr10]{
+        zxx_util::timeBlock("基数排序",[&intarr10](){
+            zxx_sort<int>::radixSort(intarr10);
+        });
+    };
+    std::thread mytobj10(mylamthread10);
+    mytobj10.detach();
     
     getchar();
 }

@@ -122,14 +122,12 @@ public:
             if (cur->isLeaf()) {
                 if (cur->isLeftChild()) {
                     cur->parent->left = nullptr;
-                    delete cur;
                 }else if(cur->isRightChild()){
                     cur->parent->right = nullptr;
-                    delete cur;
                 }else{ // 根节点
-                    delete cur;
                     _root = nullptr;
                 }
+                delete cur;
             }else{
                 stack->push(cur);
                 if (cur->right!=nullptr) {
@@ -148,7 +146,7 @@ public:
         if (strcmp(t, "i")==0) {
             goto doint;
         }
-        if (element == NULL) {
+        if (element==0) {
             throw std::invalid_argument("添加的元素不能为null");
         }
         doint:
