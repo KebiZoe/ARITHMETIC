@@ -10,6 +10,7 @@
 #import <vector>
 #import "util.hpp"
 #import <thread>
+#define sortCapacity 10000000
 using namespace::std;
 template<class Type>
 class zxx_sort{
@@ -274,6 +275,29 @@ public:
     }
     /// 基数排序，适用于整数排序，尤其是非负整数
     /// 依次对个位数，十位数，百位数千位数，万位数...进行排序
+    static void radix2Sort(vector<int> &arr){
+        int max = arr[0];
+        for (int i = 1; i < arr.size(); i++) {
+            if (arr[i]>max) {
+                max = arr[i];
+            }
+        }
+        vector<vector<int>> bucket = vector<vector<int>>(10,vector<int>(sortCapacity, 0));
+        int *bucketsizes = new int[10]{0};
+        for(int divider = 1; divider <= max; divider *= 10){
+            for(int i = 0; i<arr.size(); i++){
+                int no = arr[i]/divider%10;
+                bucket[no][bucketsizes[no]++] = arr[i];
+            }
+            int index = 0;
+            for(int i=0; i < 10; i++){
+                for(int j=0 ; j < bucketsizes[i]; j++){
+                    arr[index++] = bucket[i][j];
+                }
+                bucketsizes[i] = 0;
+            }
+        }
+    }
     static void radixSort(vector<int> &arr){
         int max = arr[0];
         for (int i = 1; i < arr.size(); i++) {
@@ -281,6 +305,7 @@ public:
                 max = arr[i];
             }
         }
+        
         int *output = new int[arr.size()]{0};
         for(int divider = 1; divider <= max; divider *= 10){
             int couts[10] = {0};

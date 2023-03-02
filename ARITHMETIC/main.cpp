@@ -24,6 +24,15 @@ void test();
 void testsort();
 
 int main() {
+    
+    
+    
+    
+    
+    
+    
+    
+    
     cout<<"测试链表，栈，队列，avl树"<<endl;
     test();
     
@@ -42,7 +51,7 @@ void test(){
 }
 
 void testsort() {
-    vector<int> intarr1 = zxx_util::getRandArr(10, 0, 10000000);
+    vector<int> intarr1 = zxx_util::getRandArr(sortCapacity, 0, 10000000);
     
     vector<int> intarr2 = vector<int>(intarr1);
     vector<int> intarr3 = vector<int>(intarr1);
@@ -53,6 +62,7 @@ void testsort() {
     vector<int> intarr8 = vector<int>(intarr1);
     vector<int> intarr9 = vector<int>(intarr1);
     vector<int> intarr10 = vector<int>(intarr1);
+    vector<int> intarr11 = vector<int>(intarr1);
     
     auto mylamthread1 = [&intarr1]{
         zxx_util::timeBlock("堆排序",[&intarr1](){
@@ -94,29 +104,29 @@ void testsort() {
     std::thread mytobj5(mylamthread5);
     mytobj5.detach();
     
-    auto mylamthread6 = [&intarr6]{
-        zxx_util::timeBlock("插入排序",[&intarr6](){
-            zxx_sort<int>::insertsort(intarr6);
-        });
-    };
-    std::thread mytobj6(mylamthread6);
-    mytobj6.detach();
-
-    auto mylamthread7 = [&intarr7]{
-        zxx_util::timeBlock("选择排序",[&intarr7](){
-            zxx_sort<int>::selectionsort(intarr7);
-        });
-    };
-    std::thread mytobj7(mylamthread7);
-    mytobj7.detach();
-
-    auto mylamthread8 = [&intarr8]{
-        zxx_util::timeBlock("冒泡排序",[&intarr8](){
-            zxx_sort<int>::bubblesort(intarr8);
-        });
-    };
-    std::thread mytobj8(mylamthread8);
-    mytobj8.detach();
+//    auto mylamthread6 = [&intarr6]{
+//        zxx_util::timeBlock("插入排序",[&intarr6](){
+//            zxx_sort<int>::insertsort(intarr6);
+//        });
+//    };
+//    std::thread mytobj6(mylamthread6);
+//    mytobj6.detach();
+//
+//    auto mylamthread7 = [&intarr7]{
+//        zxx_util::timeBlock("选择排序",[&intarr7](){
+//            zxx_sort<int>::selectionsort(intarr7);
+//        });
+//    };
+//    std::thread mytobj7(mylamthread7);
+//    mytobj7.detach();
+//
+//    auto mylamthread8 = [&intarr8]{
+//        zxx_util::timeBlock("冒泡排序",[&intarr8](){
+//            zxx_sort<int>::bubblesort(intarr8);
+//        });
+//    };
+//    std::thread mytobj8(mylamthread8);
+//    mytobj8.detach();
     
     auto mylamthread9 = [&intarr9]{
         zxx_util::timeBlock("计数排序",[&intarr9](){
@@ -133,6 +143,14 @@ void testsort() {
     };
     std::thread mytobj10(mylamthread10);
     mytobj10.detach();
+    
+    auto mylamthread11 = [&intarr11]{
+        zxx_util::timeBlock("基数排序2",[&intarr11](){
+            zxx_sort<int>::radix2Sort(intarr11);
+        });
+    };
+    std::thread mytobj11(mylamthread11);
+    mytobj11.detach();
     
     getchar();
 }
