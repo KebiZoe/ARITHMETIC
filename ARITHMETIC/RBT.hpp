@@ -9,128 +9,171 @@
 #define RBT_h
 
 #import "BST.hpp"
-
+const static bool RED = true;
+const static bool BLACK = false;
 template <class Type>
 struct RBNode: Node<Type>{
-    int height = 1;
-    AVLNode(Type value): Node<Type>(value), height(1){};
-    ~AVLNode(){
-        height = 0;
+    bool color = RED;
+    RBNode(Type value): Node<Type>(value), color(RED){};
+    ~RBNode(){
+        
     };
-    
-#pragma mark todo
-    /// 平衡因子
-    int balanceFactor(){
-        AVLNode<Type> * leftNode = dynamic_cast<AVLNode<Type> *>(this->left);
-        int leftHeight = leftNode == nullptr ? 0 : leftNode->height;
-        AVLNode<Type> * rightNode = dynamic_cast<AVLNode<Type> *>(this->right);
-        int rightHeight = rightNode == nullptr ? 0 : rightNode->height;
-        return leftHeight-rightHeight;
-    }
-    /// 更新高度
-    void updateHeight(){
-        AVLNode<Type> * leftNode = dynamic_cast<AVLNode<Type> *>(this->left);
-        AVLNode<Type> * rightNode = dynamic_cast<AVLNode<Type> *>(this->right);
-        int leftHeight = leftNode == nullptr ? 0 : leftNode->height;
-        int rightHeight = rightNode == nullptr ? 0 : rightNode->height;
-        height = 1 + max(leftHeight, rightHeight);
-    }
-    /// 获取较高的子节点 而且这里一般只在失衡的时候用得到，基本也就是g p n
-    AVLNode<Type>* tallerChild(){
-        AVLNode<Type> * leftNode = dynamic_cast<AVLNode<Type> *>(this->left);
-        AVLNode<Type> * rightNode = dynamic_cast<AVLNode<Type> *>(this->right);
-        int leftHeight = leftNode == nullptr ? 0 : leftNode->height;
-        int rightHeight = rightNode == nullptr ? 0 : rightNode->height;
-        if (leftHeight>rightHeight){
-            return leftNode;
-        }else if(leftHeight<rightHeight){
-            return rightNode;
+    virtual string toString(){
+        if (color == RED) {
+            return "R:"+to_string(this->_value);
         }else{
-            return this->isLeftChild() ? leftNode : rightNode;
+            return "B:"+to_string(this->_value);
         }
     }
-    
 };
 
 template<class Type>
-class AVL: public BST<Type>{
+class RBT: public BST<Type>{
     typedef int (*pFunc)(Type,Type);
 public:
-    AVL(pFunc cmp): BST<Type>(cmp){};
+    RBT(pFunc cmp): BST<Type>(cmp){};
     
-    ~AVL(){};
+    ~RBT(){};
     
-    AVLNode<Type>* createNode(Type element){
-        return new AVLNode(element);
+    RBNode<Type>* createNode(Type element){
+        return new RBNode(element);
     }
+    
     void afterAdd(Node<Type> *node){
-        // 添加的节点一定是在叶子节点，依次往上更新节点高度，直到找出失衡节点
-        AVLNode<Type> *avnode = dynamic_cast<AVLNode<Type> *>(node);
-        while ((avnode = dynamic_cast<AVLNode<Type> *>(avnode->parent))!=nullptr) {
-            if (isBalanced(avnode)) {
-                avnode->updateHeight();
-            }else{/// 失衡节点
-                rebalance(avnode);
-                break;
-            }
+        RBNode<Type> *node_ = dynamic_cast<RBNode<Type> *>(node);
+        RBNode<Type> *pnode = dynamic_cast<RBNode<Type> *>(node->parent);
+        if (pnode == nullptr) {
+            color(node_, BLACK);
+            return;
         }
-    }
-    void afterRemove(Node<Type> *node) {
-        AVLNode<Type> *avnode = dynamic_cast<AVLNode<Type> *>(node);
-        while ((avnode = dynamic_cast<AVLNode<Type> *>(avnode->parent))!=nullptr) {
-            if (isBalanced(avnode)) {
-                avnode->updateHeight();
-            }else{/// 失衡节点
-                rebalance(avnode);
-            }
+        if (pnode->color == BLACK) {
+            return;
         }
-    }
-    void add(Type element){
-        BST<Type>::add(element);
-    }
-    
-    void rebalance(AVLNode<Type> *grand){
-        AVLNode<Type> *parent = grand->tallerChild();
-        AVLNode<Type> *node = parent->tallerChild();
-        if (parent->isLeftChild()) { // L
-            if (node->isLeftChild()) { // LL
-                //右旋转G节点
-                BST<Type>::rotateRight(grand);
+        
+        RBNode<Type> *uncle = dynamic_cast<RBNode<Type> *>(pnode->sibling());
+        
+        RBNode<Type> *grand = color(dynamic_cast<RBNode<Type> *>(pnode->parent), RED);
+        
+        if(uncle != nullptr && uncle->color == RED){
+            color(pnode, BLACK);
+            color(uncle, BLACK);
+            afterAdd(grand);
+            return;
+        }
+        if(pnode->isLeftChild()){ //L
+            if (node->isLeftChild()) { //LL
+                color(pnode, BLACK);
             }else{ // LR
-                // 先左旋转P，再右旋转G
-                BST<Type>::rotateLeft(parent);
-                BST<Type>::rotateRight(grand);
+                color(node_, BLACK);
+                BST<Type>::rotateLeft(pnode);
             }
-        }else{ // R
-            if (node->isLeftChild()) { // RL
-                // 先右旋转P，再左旋转G
-                BST<Type>::rotateRight(parent);
-                BST<Type>::rotateLeft(grand);
-            }else { // RR
-                //左旋转G节点
-                BST<Type>::rotateLeft(grand);
+            BST<Type>::rotateRight(grand);
+        }else{ //R
+            if (node->isLeftChild()) { //RL
+                color(node_, BLACK);
+                BST<Type>::rotateRight(pnode);
+            }else{ // RR
+                color(pnode, BLACK);
             }
+            BST<Type>::rotateLeft(grand);
         }
     }
     
-    void updateHeight(Node<Type> *node){
-        AVLNode<Type> *avnode = dynamic_cast<AVLNode<Type> *>(node);
-        avnode->updateHeight();
+    void afterRemove(Node<Type> *node) {
+        // 如果删除的节点是红色
+        // 或者 用以取代删除节点的子节点是红色
+        RBNode<Type> *node_ = dynamic_cast<RBNode<Type> *>(node);
+        if(node_->color == RED){
+            color(node_, BLACK);
+            return;
+        }
+        RBNode<Type> *pnode = dynamic_cast<RBNode<Type> *>(node->parent);
+        if (pnode == nullptr) {
+            return;
+        }
+        // 删除的是黑色叶子节点【下溢】
+        // 判断被删除的node是左还是右
+        bool left = pnode->left == nullptr || node->isLeftChild();
+        RBNode<Type> *sibling = dynamic_cast<RBNode<Type> *>(left ? pnode->right : pnode -> left);
+        if (left) { // 被删除的节点在左边，兄弟节点在右边
+            if(sibling!=nullptr && sibling->color == RED){ // 兄弟节点是红色
+                color(sibling, BLACK);
+                color(pnode, RED);
+                BST<Type>::rotateLeft(pnode);
+                // 更换兄弟
+                sibling = dynamic_cast<RBNode<Type> *>(pnode->right);
+            }
+            // 兄弟节点必然是黑色
+            // 兄弟节点没有1个红色子节点，父节点要向下跟兄弟节点合并
+            if((sibling->left == nullptr||dynamic_cast<RBNode<Type> *>(sibling->left)->color==BLACK) && (sibling->right == nullptr||dynamic_cast<RBNode<Type> *>(sibling->right)->color==BLACK)){
+                bool pb = pnode->color == BLACK;
+                color(pnode, BLACK);
+                color(sibling, RED);
+                if (pb) {
+                    afterRemove(pnode);
+                }
+            }else{// 兄弟节点至少有1个红色子节点，向兄弟节点借元素
+                // 兄弟节点的左边是黑色，兄弟要先旋转
+                if (sibling->right == nullptr||dynamic_cast<RBNode<Type> *>(sibling->right)->color==BLACK) {
+                    BST<Type>::rotateRight(sibling);
+                    sibling = dynamic_cast<RBNode<Type> *>(pnode->right);
+                }
+                color(sibling, pnode->color);
+                color(dynamic_cast<RBNode<Type> *>(sibling->right), BLACK);
+                color(pnode, BLACK);
+                BST<Type>::rotateLeft(pnode);
+            }
+        }else{ // 被删除的节点在右边，兄弟节点在左边
+            if(sibling->color == RED){ // 兄弟节点是红色
+                color(sibling, BLACK);
+                color(pnode, RED);
+                BST<Type>::rotateRight(pnode);
+                // 更换兄弟
+                sibling = dynamic_cast<RBNode<Type> *>(pnode->left);
+            }
+            // 兄弟节点必然是黑色
+            // 兄弟节点没有1个红色子节点，父节点要向下跟兄弟节点合并
+            if((sibling->left == nullptr||dynamic_cast<RBNode<Type> *>(sibling->left)->color==BLACK) && (sibling->right == nullptr||dynamic_cast<RBNode<Type> *>(sibling->right)->color==BLACK)){
+                bool pb = pnode->color == BLACK;
+                color(pnode, BLACK);
+                color(sibling, RED);
+                if (pb) {
+                    afterRemove(pnode);
+                }
+            }else{// 兄弟节点至少有1个红色子节点，向兄弟节点借元素
+                // 兄弟节点的左边是黑色，兄弟要先旋转
+                if (sibling->left == nullptr||dynamic_cast<RBNode<Type> *>(sibling->left)->color==BLACK) {
+                    BST<Type>::rotateLeft(sibling);
+                    sibling = dynamic_cast<RBNode<Type> *>(pnode->left);
+                }
+                color(sibling, pnode->color);
+                color(dynamic_cast<RBNode<Type> *>(sibling->left), BLACK);
+                color(pnode, BLACK);
+                BST<Type>::rotateRight(pnode);
+            }
+        }
+        
     }
     
-    
-    bool isBalanced(AVLNode<Type> *node){
-        return abs(node->balanceFactor())<=1;
+    // 染色
+    RBNode<Type> * color(RBNode<Type> *node, bool color){
+        if (node == nullptr) {
+            return nullptr;
+        }
+        node->color = color;
+        return node;
     }
     
     static void test(){
-        AVL<int> *bst = new AVL<int>([](int a,int b)->int{
+        RBT<int> *bst = new RBT<int>([](int a,int b)->int{
             return a-b;
         });
         
         vector<int> v = {29, 37, 43, 52, 42, 5, 79, 46, 61, 70, 87, 68, 57, 26, 7, 3};
         for_each(v.begin(), v.end(), [=](int ar){
-            bst->AVL<int>::add(ar);
+            bst->add(ar);
+            cout<< "  添加 "<< ar << endl;
+            bst->display();
         });
         bst->display();
         bst->preorder([](int value){

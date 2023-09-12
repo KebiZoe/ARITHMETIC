@@ -74,6 +74,13 @@ public:
             }
         }
     }
+    
+    void afterRotate(Node<Type> *grand,Node<Type> *parent,Node<Type> *child) {
+        BST<Type>::afterRotate(grand, parent, child);
+        updateHeight(grand);
+        updateHeight(parent);
+    }
+    
     void afterRemove(Node<Type> *node) {
         AVLNode<Type> *avnode = dynamic_cast<AVLNode<Type> *>(node);
         while ((avnode = dynamic_cast<AVLNode<Type> *>(avnode->parent))!=nullptr) {
@@ -83,9 +90,6 @@ public:
                 rebalance(avnode);
             }
         }
-    }
-    void add(Type element){
-        BST<Type>::add(element);
     }
     
     void rebalance(AVLNode<Type> *grand){
@@ -158,6 +162,7 @@ public:
         cout<<"移除29"<<endl;
         bst->remove(29);
         bst->display();
+        cout<<"高度"<<bst->height()<<endl;
         bst->clear();
         bst->display();
     }

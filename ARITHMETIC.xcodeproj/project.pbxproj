@@ -35,6 +35,10 @@
 		8ADA3570280520AE00CFB145 /* sort.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = sort.hpp; sourceTree = "<group>"; };
 		8ADA3571280520AE00CFB145 /* util.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = util.hpp; sourceTree = "<group>"; };
 		8AE9382628524A2D00E5AA0F /* BST.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BST.hpp; sourceTree = "<group>"; };
+		A89113EB2AA1B48800CB9E78 /* Graph.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Graph.hpp; sourceTree = "<group>"; };
+		A8E6B18B2A9F493A00718FB2 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		A8F0D1762A9EF77F004663D2 /* Heap.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Heap.hpp; sourceTree = "<group>"; };
+		A8F0D1772A9F30B0004663D2 /* Union.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Union.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +57,7 @@
 			children = (
 				8ADA35682805209E00CFB145 /* ARITHMETIC */,
 				8ADA35672805209E00CFB145 /* Products */,
+				A8E6B18A2A9F493A00718FB2 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -74,10 +79,21 @@
 				8AE9382628524A2D00E5AA0F /* BST.hpp */,
 				8A029BD3286851C00042B74F /* AVL.hpp */,
 				8A91AC2D291254AD00DA2D79 /* RBT.hpp */,
+				A8F0D1762A9EF77F004663D2 /* Heap.hpp */,
+				A8F0D1772A9F30B0004663D2 /* Union.hpp */,
+				A89113EB2AA1B48800CB9E78 /* Graph.hpp */,
 				8ADA3570280520AE00CFB145 /* sort.hpp */,
 				8ADA3571280520AE00CFB145 /* util.hpp */,
 			);
 			path = ARITHMETIC;
+			sourceTree = "<group>";
+		};
+		A8E6B18A2A9F493A00718FB2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A8E6B18B2A9F493A00718FB2 /* libc++.tbd */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

@@ -57,6 +57,10 @@ public:
         return nullptr;
     }
     
+    virtual string toString(){
+        return to_string(_value);
+    }
+    
     void static output_impl(Node *node,bool left, string const& indent){
         if (node->right != nullptr) {
             output_impl(node->right, false, indent+(left ? "|     " : "      "));
@@ -64,7 +68,7 @@ public:
         std::cout << indent;
         std::cout << (left ? "└" : "┌");
         std::cout << "----";
-        std::cout << ":" << node->_value << endl;
+        std::cout << ":" << node->toString() << endl;
         if (node->left != nullptr) {
             output_impl(node->left, true, indent+(left ? "      " : "|     "));
         }
@@ -76,7 +80,7 @@ public:
         if (node->right != nullptr) {
             output_impl(node->right, false, " ");
         }
-        std::cout << ":" << node->_value << endl;
+        std::cout << ":" << node->toString() << endl;
         if (node->left != nullptr) {
             output_impl(node->left, true, " ");
         }
@@ -203,7 +207,7 @@ public:
         // 维护parent和height的高度
         afterRotate(grand, parent, child);
     }
-    void afterRotate(Node<Type> *grand,Node<Type> *parent,Node<Type> *child){
+    virtual void afterRotate(Node<Type> *grand,Node<Type> *parent,Node<Type> *child){
         if (grand->isLeftChild()){
             grand->parent->left = parent;
         }else if(grand->isRightChild()){
@@ -218,13 +222,8 @@ public:
         
         parent->parent = grand->parent;
         grand->parent = parent;
-        
-        updateHeight(grand);
-        updateHeight(parent);
     }
-    virtual void updateHeight(Node<Type> *node){
-        
-    }
+    
     void remove(Type element){
         Node<Type> *node = find(element);
         if (node == nullptr) {
@@ -246,7 +245,7 @@ public:
             }else{
                 node->parent->right = replacenode;
             }
-            afterRemove(node);
+            afterRemove(replacenode);
         }else if(node->parent==nullptr){
             _root = nullptr;
             afterRemove(node);
@@ -472,7 +471,7 @@ protected:
         if (node->right!=nullptr) {
             sucnode = node->right;
             while (sucnode->left!=nullptr) {
-                sucnode = sucnode->right;
+                sucnode = sucnode->left;
             }
             return sucnode;
         }
